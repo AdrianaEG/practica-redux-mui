@@ -3,25 +3,30 @@ import { Box, Button, Container, CssBaseline, Grid, Link, TextField, Typography 
 import {Google} from '@mui/icons-material';
 import { AuthLayout } from '../layout/AuthLayout';
 import { useForm } from '../../hooks/useForm';
-import { useDispatch } from 'react-redux';
-import { checkingAuthentication, startGoogleSignIn } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkingAuthentication, startGoogleSignIn, startLoginWithEmailPassword } from '../../store';
+import { CheckingAuth } from '../../ui/components/CheckingAuth';
+import { useMemo } from 'react';
 
+const formData = {
+  email: '',
+  password: ''
+}
 export const LoginPage = () => {
   const dispatch = useDispatch();
-  const camposForm = {
-    email: 'adriana@algo.com',
-    password: '123ABC'
-  }
+  const {status} = useSelector(state=>state.auth)
   const onSubmit = (e)=>{
-    dispatch(checkingAuthentication());
     e.preventDefault();
+    dispatch(startLoginWithEmailPassword({email, password}));
   }
 
   const onGoogleSignIn = ()=>{
    dispatch(startGoogleSignIn())
   }
 
-  const {email, password, onInputChange} = useForm(camposForm)
+  const {email, password, onInputChange} = useForm(formData)
+  const isCheckingAuthentication = useMemo(()=>status==='checking', [status]);
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -52,19 +57,22 @@ export const LoginPage = () => {
               value={password}
               onChange={onInputChange}
               />
+              {isCheckingAuthentication && <CheckingAuth/>}
               <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                disabled = {isCheckingAuthentication}
               >
               Login
               </Button>
               <Button
-              fullWidth
-              variant="outlined"
-              sx={{ mt: 0, mb: 2 }}
-              onClick={onGoogleSignIn}
+                fullWidth
+                variant="outlined"
+                sx={{ mt: 0, mb: 2 }}
+                onClick={onGoogleSignIn}
+                disabled = {isCheckingAuthentication}
               >
               <Google/>
               <Typography

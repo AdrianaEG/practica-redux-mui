@@ -20,6 +20,8 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import LogoutIcon from '@mui/icons-material/Logout';
 import TodayIcon from '@mui/icons-material/Today';
+import { useDispatch } from 'react-redux';
+import { startLogout } from '../../store/auth/thunk';
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -68,6 +70,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export const Menu = ({children}) => {
+  const dispatch = useDispatch();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -78,6 +81,10 @@ export const Menu = ({children}) => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const onLogout = ()=>{
+    dispatch(startLogout());
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -100,6 +107,7 @@ export const Menu = ({children}) => {
             color="inherit"
             aria-label="Logout"
             sx={{ml:"auto"}}
+            onClick={onLogout}
           >
             <LogoutIcon/>
           </IconButton>
