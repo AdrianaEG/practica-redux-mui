@@ -1,8 +1,32 @@
 import { Button, Drawer, Grid, TextField, Typography } from "@mui/material"
 import {DeleteOutline, SaveOutlined, UploadOutlined} from '@mui/icons-material';
 import { ImagesGallery } from "../components/ImagesGallery";
+import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "../../hooks/useForm";
+import { setActiveFood } from "../../store/foods/foodsSlice";
+import { useEffect } from "react";
+import { startSaveFoods } from "../../store/foods/thunk";
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css'
 
 export const MenuSelected = () => {
+    const dispatch = useDispatch();
+    const {active, messageSaved, isSaving} = useSelector(state=>state.foods); 
+    const {formState, onInputChange, title, body, ingredients, recipe} = useForm(active);
+
+    useEffect(() => {
+        dispatch(setActiveFood(formState));
+    }, [formState])
+
+    const onClickSave = ()=>{
+        dispatch(startSaveFoods())
+    }
+    useEffect(() => {
+        if(messageSaved.length >0){
+            Swal.fire('Nota actualizada', messageSaved, 'success')
+          }
+    }, [messageSaved])
+    
   return (
     <Grid container padding="10px 60px">
         <Grid container direction="row" justifyContent="space-between" alignItems="center" mb="10px">
@@ -15,10 +39,12 @@ export const MenuSelected = () => {
                     label="Título"
                     sx={{border: 'none', mb:1}}
                     name='title'
+                    value={title}
+                    onChange={onInputChange}
                 />
             </Grid>
             <Grid item>
-                <Button color="primary" variant="outlined"><SaveOutlined sx={{fontSize: 15, mr:1}}/>Guardar</Button>
+                <Button color="primary" variant="outlined" onClick={onClickSave} disabled={isSaving}><SaveOutlined sx={{fontSize: 15, mr:1}}/>Guardar</Button>
             </Grid>
 
         </Grid>
@@ -32,6 +58,8 @@ export const MenuSelected = () => {
                     placeholder="¿Qué vas a comer en el dia de hoy?"
                     minRows={5}
                     name='body'
+                    value={body}
+                    onChange={onInputChange}
                 />
             </Grid>
             <Drawer/>
@@ -46,6 +74,8 @@ export const MenuSelected = () => {
                         placeholder="Ingredientes"
                         minRows={5}
                         name='ingredients'
+                        value={ingredients}
+                        onChange={onInputChange}
                     />
                 </Grid>
                 <Grid item mt="10px" width="49%">
@@ -58,6 +88,8 @@ export const MenuSelected = () => {
                         placeholder="Receta"
                         minRows={5}
                         name='recipe'
+                        value={recipe}
+                        onChange={onInputChange}
                     />
                 </Grid>
             </Grid>

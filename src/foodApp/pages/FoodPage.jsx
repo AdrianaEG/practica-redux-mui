@@ -3,13 +3,27 @@ import AddOutlined from '@mui/icons-material/AddOutlined';
 import {Menu} from '../components/Menu';
 import { NothingSelected } from '../views/NothingSelected';
 import { MenuSelected } from '../views/MenuSelected';
+import { useDispatch, useSelector } from 'react-redux';
+import { startNewFood } from '../../store/foods/thunk';
+import { useMemo } from 'react';
 
 export const FoodPage = () => {
+  const dispatch = useDispatch();
+  const {isSaving, active} = useSelector(state=>state.foods);
+  const onClick = ()=>{
+    dispatch(startNewFood());
+  }
   return (
     <>
       <Menu>
-          {/*<NothingSelected/>*/}
-          <MenuSelected/>
+        {
+          active 
+          ?
+            <MenuSelected/>
+          :
+            <NothingSelected/>
+        }
+          
           <IconButton
             size="large"
             sx={{
@@ -20,6 +34,8 @@ export const FoodPage = () => {
               right: 50,
               bottom: 50
             }}
+            disabled={isSaving}
+            onClick={onClick}
           >
             <AddOutlined sx={{fontSize:30}} />
           </IconButton>

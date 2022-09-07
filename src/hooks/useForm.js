@@ -35,6 +35,7 @@ export const useForm = (initialForm = {}, formValidations = {})=>{
         const formCheckedValues = {};
 
         for (const formField of Object.keys(formValidations)) {
+            //el formField es displayName, email, password
             const [fn, errorMessage] = formValidations[formField];//Desestructuro
 
             formCheckedValues[`${formField}Valid`] = fn(formState[formField]) ? null : errorMessage

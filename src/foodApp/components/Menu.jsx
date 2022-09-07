@@ -20,8 +20,9 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import LogoutIcon from '@mui/icons-material/Logout';
 import TodayIcon from '@mui/icons-material/Today';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { startLogout } from '../../store/auth/thunk';
+import { setActiveFood } from '../../store/foods/foodsSlice';
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -71,6 +72,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export const Menu = ({children}) => {
   const dispatch = useDispatch();
+  const {displayName} = useSelector(state=>state.auth);
+  const {foods} = useSelector(state=>state.foods);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -84,6 +87,10 @@ export const Menu = ({children}) => {
 
   const onLogout = ()=>{
     dispatch(startLogout());
+  }
+
+  const onClickItem = (food)=>{
+    dispatch(setActiveFood(food))
   }
 
   return (
@@ -101,7 +108,7 @@ export const Menu = ({children}) => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Adri Gonzalez
+            {displayName}
           </Typography>
           <IconButton
             color="inherit"
@@ -137,13 +144,13 @@ export const Menu = ({children}) => {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Lunes', 'Martes', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map((text) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
+          {foods.map((food) => (
+            <ListItem key={food.title} disablePadding>
+              <ListItemButton onClick={()=>{onClickItem(food)}}>
                 <ListItemIcon>
                  <TodayIcon />
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={food.title} />
               </ListItemButton>
             </ListItem>
           ))}
