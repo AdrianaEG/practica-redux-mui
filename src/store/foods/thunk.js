@@ -1,8 +1,9 @@
 import { async } from "@firebase/util";
-import { collection, doc, setDoc } from "firebase/firestore/lite";
+import { collection, deleteDoc, doc, setDoc } from "firebase/firestore/lite";
 import { firebaseDB } from "../../firebase/config";
+import { fileUpload } from "../../helpers/fileUpload";
 import { loadFoods } from "../../helpers/loadFoods";
-import { addNewEmptyFood, savingFood, setActiveFood, setFoods, setSaving, updateFood } from "./foodsSlice"
+import { addNewEmptyFood, savingFood, setActiveFood, setPhotosToActiveFood, setFoods, setSaving, updateFood, deleteFoodById } from "./foodsSlice"
 
 export const startNewFood = ()=>{
     return async(dispatch, getState)=>{
@@ -43,6 +44,28 @@ export const startSaveFoods = ()=>{
         const docRef = doc(firebaseDB, `${uid}/foodsApp/foods/${active.id}`);
         await setDoc(docRef, foodToFirestore, {merge: true})
         dispatch(updateFood(active));
-        console.log('Actualizacion nota activa')
+    }
+}
+
+export const startUploadingFiles = (files=[])=>{
+    return async(dispatch)=>{
+        dispatch(setSaving());
+        const filesUploadPromises = [];
+        
+        for (const file of files) {
+            filesUploadPromises.push(fileUpload(file))
+        }
+        const photosURL = await Promise.all(filesUploadPromises);
+        console.log(photosURL);
+        dispatch(setPhotosToActiveFood(photosURL))
+    }
+}
+
+export const startDeleteFood = (food={})=>{
+    return async(dispatch, getState)=>{
+        const {uid} = getState().auth;
+        const docRef = doc(firebaseDB, `${uid}/foodsApp/foods/${food.id}`);
+        await deleteDoc(docRef);
+        dispatch(deleteFoodById(food))
     }
 }

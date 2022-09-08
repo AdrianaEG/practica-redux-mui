@@ -22,7 +22,9 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import TodayIcon from '@mui/icons-material/Today';
 import { useDispatch, useSelector } from 'react-redux';
 import { startLogout } from '../../store/auth/thunk';
-import { setActiveFood } from '../../store/foods/foodsSlice';
+import { deleteFoodById, setActiveFood } from '../../store/foods/foodsSlice';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { startDeleteFood } from '../../store/foods/thunk';
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -93,6 +95,10 @@ export const Menu = ({children}) => {
     dispatch(setActiveFood(food))
   }
 
+  const onDeleteFood = (food)=>{
+   dispatch(startDeleteFood(food));
+  }
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -145,12 +151,17 @@ export const Menu = ({children}) => {
         <Divider />
         <List>
           {foods.map((food) => (
-            <ListItem key={food.title} disablePadding>
-              <ListItemButton onClick={()=>{onClickItem(food)}}>
+            <ListItem key={food.title} disablePadding sx={{display: "flex", justifyContent: "space-between"}}>
+              <ListItemButton onClick={()=>{onClickItem(food)}} sx={{width:"200px"}}>
                 <ListItemIcon>
                  <TodayIcon />
                 </ListItemIcon>
                 <ListItemText primary={food.title} />
+              </ListItemButton>
+              <ListItemButton onClick={()=>{onDeleteFood(food)}}>
+                <ListItemIcon >
+                <DeleteIcon />
+                </ListItemIcon>
               </ListItemButton>
             </ListItem>
           ))}

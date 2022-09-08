@@ -36,10 +36,21 @@ export const foodsSlice = createSlice({
             });
             state.messageSaved = `${action.payload.title}, actualizada correctamente`
         },
-        deleteFoodById: (state)=>{
-
+        setPhotosToActiveFood: (state, action)=>{
+            state.isSaving=false;
+            state.active.imagesURL = [...state.active.imagesURL, ...action.payload]
+        },
+        clearFoodsLogout: (state)=>{
+            state.isSaving= false;
+            state.messageSaved= '';
+            state.foods= [];
+            state.active= null
+        },
+        deleteFoodById: (state, action)=>{
+            state.active = null;
+            state.foods = state.foods.filter( food => food.id !== action.payload.id );
         }
 
     }
 });
-export const { addNewEmptyFood, savingFood, setActiveFood, setFoods, setSaving, updateFood, deleteFoodById } = foodsSlice.actions;
+export const { addNewEmptyFood, clearFoodsLogout, savingFood, setActiveFood,setPhotosToActiveFood, setFoods, setSaving, updateFood, deleteFoodById } = foodsSlice.actions;

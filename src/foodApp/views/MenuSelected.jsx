@@ -1,15 +1,16 @@
-import { Button, Drawer, Grid, TextField, Typography } from "@mui/material"
+import { Button, Drawer, Grid, TextField, Typography, IconButton } from "@mui/material"
 import {DeleteOutline, SaveOutlined, UploadOutlined} from '@mui/icons-material';
 import { ImagesGallery } from "../components/ImagesGallery";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "../../hooks/useForm";
 import { setActiveFood } from "../../store/foods/foodsSlice";
-import { useEffect } from "react";
-import { startSaveFoods } from "../../store/foods/thunk";
+import { useEffect, useRef } from "react";
+import { startSaveFoods, startUploadingFiles } from "../../store/foods/thunk";
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css'
 
 export const MenuSelected = () => {
+    const fileInputRef = useRef();
     const dispatch = useDispatch();
     const {active, messageSaved, isSaving} = useSelector(state=>state.foods); 
     const {formState, onInputChange, title, body, ingredients, recipe} = useForm(active);
@@ -26,6 +27,12 @@ export const MenuSelected = () => {
             Swal.fire('Nota actualizada', messageSaved, 'success')
           }
     }, [messageSaved])
+
+    const onFileInputChange = (e)=>{
+        if(e.target.files){
+            dispatch(startUploadingFiles(e.target.files))
+        }
+    }
     
   return (
     <Grid container padding="10px 60px">
@@ -62,6 +69,16 @@ export const MenuSelected = () => {
                     onChange={onInputChange}
                 />
             </Grid>
+            <input type="file" name="images" id="images" multiple onChange={onFileInputChange} style={{display: 'none'}}
+              ref={fileInputRef}/>
+              <IconButton
+              color='primary'
+              disabled={isSaving}
+              onClick={()=>fileInputRef.current.click()}
+            >
+                <Typography>Subir imágenes</Typography>
+                <UploadOutlined/>
+            </IconButton>
             <Drawer/>
             <Grid container direction="row" width="100%" justifyContent="space-between">
                 <Grid item mt="10px" width="49%">

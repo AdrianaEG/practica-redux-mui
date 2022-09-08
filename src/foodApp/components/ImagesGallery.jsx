@@ -2,17 +2,19 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import { useSelector } from 'react-redux';
 
 export const ImagesGallery = () =>  {
+  const {active} = useSelector(state=>state.foods)
   return (
     <Box sx={{ width: "100%", height: 450, overflowY: 'scroll'}}>
       <ImageList variant="masonry" cols={3} gap={8} sx={{width:"100%"}}>
-        {itemData.map((item) => (
-          <ImageListItem key={item.img}>
+        {active.imagesURL.map((item) => (
+          <ImageListItem key={item}>
             <img
-              src={`${item.img}?w=248&fit=crop&auto=format`}
-              srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-              alt={item.title}
+              src={`${item}?w=248&fit=crop&auto=format`}
+              srcSet={`${item}?w=248&fit=crop&auto=format&dpr=2 2x`}
+              alt={item}
               loading="lazy"
             />
           </ImageListItem>
